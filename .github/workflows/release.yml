@@ -1,0 +1,61 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers on version tags like v1.0.0, v1.0.1, etc.
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+    permissions:
+      contents: write  # Required to create releases and upload assets
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: '5.9'
+      
+      - name: Build the app
+        run: |
+          chmod +x package.sh
+          ./package.sh
+      
+      - name: Create ZIP archive
+        run: |
+          zip -r OTPChecker.app.zip OTPChecker.app
+      
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: OTPChecker.app.zip
+          body: |
+            ## OTPChecker ${{ steps.get_version.outputs.VERSION }}
+            
+            ### Installation
+            1. Download `OTPChecker.app.zip`
+            2. Extract the ZIP file
+            3. Move `OTPChecker.app` to your Applications folder
+            4. Right-click and select "Open" the first time to bypass Gatekeeper
+            5. Grant **Full Disk Access** permission:
+               - Open **System Settings**
+               - Go to **Privacy & Security** > **Full Disk Access**
+               - Add **OTPChecker.app** to the list
+            
+            ### What's Included
+            - Pre-built macOS application bundle
+            - No need to build from source
+            
+            For more information, see the [README](https://github.com/${{ github.repository }}/blob/main/README.md).
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
