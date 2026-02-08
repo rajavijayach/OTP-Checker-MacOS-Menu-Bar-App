@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:otpchecker}",
+            "name": "Debug OTPChecker",
+            "target": "OTPChecker",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug OTPChecker"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:otpchecker}",
+            "name": "Release OTPChecker",
+            "target": "OTPChecker",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release OTPChecker"
+        }
+    ]
+}
